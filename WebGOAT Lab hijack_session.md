@@ -4,6 +4,7 @@ Lauch WebGoat
 
 ## A1 Hijack a session
 Lets start from opening Burp Suite
+
 <img width="739" height="532" alt="image" src="https://github.com/user-attachments/assets/f3e3356c-0e36-4c54-95c6-d97d4b079e3f" />
 
 We will use built in chromium browser to analyze all the requests that coming through it.
