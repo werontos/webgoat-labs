@@ -1,4 +1,4 @@
-<img width="1352" height="782" alt="image" src="https://github.com/user-attachments/assets/aa99e32d-22bd-458e-b5a2-dea494691d6a" />Lauch WebGoat
+Lauch WebGoat
 
 `sudo docker run -p 127.0.0.1:8080:8080 -p 127.0.0.1:9090:9090 -e TZ=Europe/Amsterdam webgoat/webgoat`
 
