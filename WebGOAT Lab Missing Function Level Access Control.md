@@ -102,7 +102,3 @@ d4T2ahJN4fWP83s9JdLISio7Auh4mWhFT1Q38S6OewM=
 ```
 
 <img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/17c77aa1-2c2e-49ae-8035-1aecb68f61f6" />
-
-## Takeaway
-
-Hiding admin functionality through UI obscurity (removing menu items, unlisted endpoints) is not access control. Every sensitive endpoint needs a server-side authorization check tied to the user's role, independent of whether the client-side interface exposes it.
