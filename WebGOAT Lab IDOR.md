@@ -1,4 +1,4 @@
-# WebGOAT Lab — IDOR (Insecure Direct Object References)
+# WebGoat Lab — IDOR (Insecure Direct Object References)
 
 ## Launch WebGoat
 
@@ -6,79 +6,92 @@
 sudo docker run -p 127.0.0.1:8080:8080 -p 127.0.0.1:9090:9090 -e TZ=Europe/Amsterdam webgoat/webgoat
 ```
 
-## IDOR (Insecure Direct Object References)
+## Objective
 
-We will use burp suite same as previous one, so open a browser, hit a http://localhost:8080/WebGoat and start from the second challenge IDOR
+Exploit an Insecure Direct Object Reference to view and modify another user's profile without proper authorization.
 
-![image](https://github.com/user-attachments/assets/779042fc-d27a-433b-bc66-fd1406135d6e)
+## Walkthrough
 
-lets use our creds tom:cat to authenticate ourself
+I used Burp Suite the same way as in the previous lab. Opened the browser, hit `http://localhost:8080/WebGoat`, and started from the second challenge: **IDOR**.
 
-![image](https://github.com/user-attachments/assets/31a56538-2672-4c57-a242-f7f3ed1e8e70)
+<img width="739" height="532" alt="image" src="https://github.com/user-attachments/assets/779042fc-d27a-433b-bc66-fd1406135d6e" />
 
-![image](https://github.com/user-attachments/assets/701d0b09-af42-43d4-b976-8aa302084ea9)
+Logged in with the `tom:cat` credentials.
 
-We will analyze the difference between the raw server response and the information displayed in the user profile, compare the data returned by the server with the information rendered on the page to identify hidden attributes.
-We will determine and list the two attributes that are present in the server response but are not visible in the profile
+<img width="1113" height="655" alt="image" src="https://github.com/user-attachments/assets/31a56538-2672-4c57-a242-f7f3ed1e8e70" />
 
-![image](https://github.com/user-attachments/assets/904de0ae-60b8-457d-a752-000e1307d2aa)
+<img width="483" height="489" alt="image" src="https://github.com/user-attachments/assets/701d0b09-af42-43d4-b976-8aa302084ea9" />
 
-I clicked on a View Profile button and there is a dropdown with the info Name,Color,Size, but lets analyze server response
+### Comparing the Raw Response with the Rendered Page
 
-![image](https://github.com/user-attachments/assets/9114add6-2d34-43df-8676-444fac11e3b1)
+The task was to compare the raw server response against what's actually displayed on the profile page, and identify hidden attributes — fields returned by the server but not rendered in the UI.
 
-As we can see, there is more given info than on site, so lets fill the field with role and userId
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/904de0ae-60b8-457d-a752-000e1307d2aa" />
 
-![image](https://github.com/user-attachments/assets/149a82aa-1681-4de5-8fa4-4b893a7b3fa6)
+Clicking **View Profile** only shows a dropdown with **Name**, **Color**, and **Size**. But the raw server response tells a different story:
 
-Correct, move further
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/9114add6-2d34-43df-8676-444fac11e3b1" />
 
-![image](https://github.com/user-attachments/assets/973518b0-f870-42e8-933f-b13185c0258e)
+As expected, the response contains more data than the page displays — specifically **`role`** and **`userId`**.
 
-So, here we need to enter the url path to our profile, but we dont know our user profile id, so lets analyze the response + request
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/149a82aa-1681-4de5-8fa4-4b893a7b3fa6" />
 
-![image](https://github.com/user-attachments/assets/a3a22c13-bc38-4096-9eb2-38866a08be54)
+Correct — moving on.
 
-as we can see, our path is /WebGoat/IDOR/profile, and our Tom Cat userId is 2342384
-So, our answer for this one will be WebGoat/IDOR/profile/2342384
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/973518b0-f870-42e8-933f-b13185c0258e" />
 
-![image](https://github.com/user-attachments/assets/c452f343-69be-4f52-b12e-2fde7b195060)
+### Finding the Profile Path
 
-So, lets move further
+Next task was to figure out the URL path to my own profile, without knowing my user ID up front. I dug through the request/response pair to find it:
 
-![image](https://github.com/user-attachments/assets/41d9e1c1-4444-4513-a743-17e47f10d6b7)
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/a3a22c13-bc38-4096-9eb2-38866a08be54" />
 
-1 task is to view someone else profile, i think its easy
+The path turned out to be `/WebGoat/IDOR/profile`, and Tom Cat's `userId` is `2342384`. So the full answer is:
 
-![image](https://github.com/user-attachments/assets/91bf012a-55b0-4671-8174-49819c97994f)
+```text
+WebGoat/IDOR/profile/2342384
+```
 
-It literally says us to brute userId's as we can see in the request path
-Lets brute some id's to see what we can get
-Forward our request to intruder
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/c452f343-69be-4f52-b12e-2fde7b195060" />
 
-![image](https://github.com/user-attachments/assets/2d88ee3d-2056-47bf-8fc2-6dc1ab39107f)
+Moving on.
 
-![image](https://github.com/user-attachments/assets/f619fc2d-fc58-451f-9a22-eafbffdb2252)
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/41d9e1c1-4444-4513-a743-17e47f10d6b7" />
 
-Set our payload to Numbers and lets start from 1 to 99, small brute force.
+### Viewing Someone Else's Profile
 
-![image](https://github.com/user-attachments/assets/bba3afb3-35b9-4d1f-9776-47a07641953b)
+Task 1 was to view another user's profile — figured this would be simple.
 
-hit Start attack
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/91bf012a-55b0-4671-8174-49819c97994f" />
 
-![image](https://github.com/user-attachments/assets/e1d93804-6ce3-434c-9897-df719ef743fd)
+The lab practically spells it out: brute-force the `userId` values, since it's exposed directly in the request path. Forwarded the request to **Intruder**:
 
-Success, we got an account Buffalo Bill on 88's request
-First task complete
-Now we need to edit profile
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/2d88ee3d-2056-47bf-8fc2-6dc1ab39107f" />
 
-![image](https://github.com/user-attachments/assets/e0c937c1-ddf5-4d7e-9251-00c2c63f3db8)
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/f619fc2d-fc58-451f-9a22-eafbffdb2252" />
 
-So, we now that to change smth we use PUT request, lets immediately change it
+Set the payload type to **Numbers**, ranging from `1` to `99` — a small, targeted brute force.
 
-![image](https://github.com/user-attachments/assets/7ca1fbb3-785e-4ac5-a438-fa3fd2306dee)
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/bba3afb3-35b9-4d1f-9776-47a07641953b" />
 
-And now take a look at the Content-Type, Server accepts json, so we will use json formatted request to edit user, we already have userid in path
-And as we can see, Well Done we modified someone else profile using IDOR Vulnerability
+Hit **Start attack**:
 
-![image](https://github.com/user-attachments/assets/2555e455-83e8-4ba3-8066-8542902b3971)
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/e1d93804-6ce3-434c-9897-df719ef743fd" />
+
+Success — account **Buffalo Bill** turned up on request `88`. First task complete.
+
+### Editing Someone Else's Profile via IDOR
+
+Next step: edit that profile.
+
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/e0c937c1-ddf5-4d7e-9251-00c2c63f3db8" />
+
+Since modifying a resource means a `PUT` request, I switched to `PUT` right away.
+
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/7ca1fbb3-785e-4ac5-a438-fa3fd2306dee" />
+
+Checking the **`Content-Type`** header showed the server accepts JSON, so I sent a JSON-formatted body to edit the user — the `userId` was already in the path.
+
+**Result:** the profile of another user was successfully modified using the IDOR vulnerability.
+
+<img width="1414" height="842" alt="image" src="https://github.com/user-attachments/assets/2555e455-83e8-4ba3-8066-8542902b3971" />
