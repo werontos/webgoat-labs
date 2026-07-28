@@ -306,7 +306,3 @@ This drops the `access_log` table and comments out everything after it.
 ## Result
 
 SQL Injection challenge passed.
-
-## Takeaway
-
-Every one of these tasks comes down to the same root cause: user input concatenated directly into a SQL string instead of being passed as a bound parameter. Prepared statements neutralize all of the payloads above, since the input is treated strictly as data and never as executable SQL — regardless of quotes, comments, or stacked statements.
